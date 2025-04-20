@@ -1,19 +1,24 @@
 pipeline {
     agent any
 
+    environment {
+        IMAGE_TAG = "quasim07/java-demo-cicd:${env.BUILD_NUMBER}"
+    }
+
     stages {
         stage('Build') {
             steps {
                 bat 'mvn clean package'
             }
         }
+
         stage('Docker Build & Push') {
             steps {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-pass', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         bat 'docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%'
-                        bat 'docker build -t quasim07/java-demo-cicd .'
-                        bat 'docker push quasim07/java-demo-cicd'
+                        bat "docker build -t %IMAGE_TAG% ."
+                        bat "docker push %IMAGE_TAG%"
                     }
                 }
             }
