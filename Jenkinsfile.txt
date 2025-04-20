@@ -9,12 +9,12 @@ pipeline {
         }
         stage('Docker Build & Push') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-pass', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-    bat 'docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%'
-    bat 'docker build -t quasim07/java-demo-cicd .'
-    bat 'docker push quasim07/java-demo-cicd'
-}
-
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'dockerhub-pass', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        bat 'docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%'
+                        bat 'docker build -t quasim07/java-demo-cicd .'
+                        bat 'docker push quasim07/java-demo-cicd'
+                    }
                 }
             }
         }
