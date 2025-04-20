@@ -1,0 +1,25 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/DineshKumar38/final_project.git'
+            }
+        }
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+        stage('Docker Build & Push') {
+            steps {
+                withCredentials([string(credentialsId: 'dockerhub-pass', variable: 'DOCKER_PASS')]) {
+                    sh 'docker build -t yourdockerhub/demo-java-cicd .'
+                    sh 'echo $DOCKER_PASS | docker login -u yourdockerhub --password-stdin'
+                    sh 'docker push yourdockerhub/demo-java-cicd'
+                }
+            }
+        }
+    }
+}
